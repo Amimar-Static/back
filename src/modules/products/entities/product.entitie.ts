@@ -6,6 +6,7 @@ export class Product{
     description: string
     value: string
     available: boolean
+    highlighted: boolean
     category: string
     image: string | null
     product_url: string | null
