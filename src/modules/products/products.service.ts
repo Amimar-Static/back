@@ -5,16 +5,16 @@ import { ProductsRepository } from './repositories/product.repository';
 @Injectable()
 export class ProductService{
     constructor(private productsRepository: ProductsRepository){}
-    create(data: CreateProductDto){
-        return this.productsRepository.create(data)
+    async create(data: CreateProductDto){
+        return await this.productsRepository.create(data)
     }
 
-    findAll(){
-        return this.productsRepository.findAll()
+    async findAll(){
+        return await this.productsRepository.findAll()
     }
 
-    findOne(id: string){
-        const product = this.productsRepository.findOne(id)
+    async findOne(id: string){
+        const product = await this.productsRepository.findOne(id)
         if(!product){
             throw new NotFoundException("Produto não encontrado!")
         }
