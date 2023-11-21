@@ -9,3 +9,68 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model User{
+  id String @id 
+  name String
+  email String @unique
+  password String
+  phone String
+  register_date DateTime 
+  account_state String
+  adress Adress[]
+  @@map("users")
+}
+
+model Adress {
+  id String @id 
+  zipcode String
+  state String 
+  city String
+  street String
+  number String
+  complement String
+  //Relacionamento com user
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("adresses")
+}
+
+model Product {
+  id String @id
+  name String
+  description String
+  value String
+  available Boolean
+  highlighted Boolean
+  categories CategoryOnProduct[]
+  image String?
+  product_url String?
+  register_date DateTime 
+
+  @@map("products")
+}
+
+model Category {
+  id String @id
+  name String
+  image String?
+  category_url String?
+  products CategoryOnProduct[]
+
+  @@map("categories")
+}
+
+// Tabela Pivo
+model CategoryOnProduct {
+  product Product @relation(fields: [productId], references: [id])
+  productId String
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([productId, categoryId])
+  // nome tabela do banco 
+  @@map("categories_in_products")
+}

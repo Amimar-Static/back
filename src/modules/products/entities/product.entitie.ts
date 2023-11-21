@@ -10,8 +10,10 @@ export class Product{
     category: string
     image: string | null
     product_url: string | null
-
+    readonly register_date: Date
+    
     constructor(){
         this.id = randomUUID()
+        this.register_date = new Date()
     }
 }
