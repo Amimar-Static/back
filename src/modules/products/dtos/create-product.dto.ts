@@ -6,4 +6,5 @@ export class CreateProductDto{
     category: string
     image: string | null
     product_url: string | null
+    register_date: Date 
 }
