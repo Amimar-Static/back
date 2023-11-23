@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ProductController } from "./products.controller";
 import { ProductService } from "./products.service";
-import { ProductInMemoryRepository } from './repositories/in-memory/product.in-memorey-repository';
 import { ProductsRepository } from './repositories/product.repository';
+import { PrismaService } from 'src/database/prisma.service';
+import { ProductPrismaRepository } from './repositories/prisma/products.prisma.repository';
 
 @Module({
     controllers: [ProductController],
     providers: [
         ProductService,
+        PrismaService,
         {
             provide: ProductsRepository,
-            useClass: ProductInMemoryRepository
+            useClass: ProductPrismaRepository
         }
     ]
 })

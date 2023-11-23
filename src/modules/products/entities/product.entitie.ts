@@ -5,12 +5,12 @@ export class Product{
     name: string
     description: string
     value: string
-    available: boolean
+    avaliable: boolean
     highlighted: boolean
-    category: string
     image: string | null
     product_url: string | null
     readonly register_date: Date
+    categoryId: string
     
     constructor(){
         this.id = randomUUID()
