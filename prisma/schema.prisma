@@ -19,7 +19,7 @@ model User{
   phone String
   register_date DateTime 
   account_state String
-  adress Adress[]
+  adresses Adress[]
   @@map("users")
 }
 
@@ -38,39 +38,31 @@ model Adress {
   @@map("adresses")
 }
 
-model Product {
-  id String @id
-  name String
-  description String
-  value String
-  available Boolean
-  highlighted Boolean
-  categories CategoryOnProduct[]
-  image String?
-  product_url String?
-  register_date DateTime 
-
-  @@map("products")
-}
 
 model Category {
   id String @id
-  name String
+  name String @unique
   image String?
   category_url String?
-  products CategoryOnProduct[]
+  products Product[]
 
   @@map("categories")
 }
 
-// Tabela Pivo
-model CategoryOnProduct {
-  product Product @relation(fields: [productId], references: [id])
-  productId String
+model Product {
+  id String @id
+  name String @unique
+  description String
+  value String
+  avaliable  Boolean
+  highlighted Boolean
+  image String?
+  product_url String?
+  register_date DateTime 
   category Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
-  @@id([productId, categoryId])
-  // nome tabela do banco 
-  @@map("categories_in_products")
+  @@map("products")
 }
+
+

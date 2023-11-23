@@ -26,21 +26,6 @@ CREATE TABLE "adresses" (
 );
 
 -- CreateTable
-CREATE TABLE "products" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "value" TEXT NOT NULL,
-    "available" BOOLEAN NOT NULL,
-    "highlighted" BOOLEAN NOT NULL,
-    "image" TEXT,
-    "product_url" TEXT,
-    "register_date" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "products_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "categories" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -51,11 +36,19 @@ CREATE TABLE "categories" (
 );
 
 -- CreateTable
-CREATE TABLE "categories_in_products" (
-    "productId" TEXT NOT NULL,
+CREATE TABLE "products" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    "available" BOOLEAN NOT NULL,
+    "highlighted" BOOLEAN NOT NULL,
+    "image" TEXT,
+    "product_url" TEXT,
+    "register_date" TIMESTAMP(3) NOT NULL,
     "categoryId" TEXT NOT NULL,
 
-    CONSTRAINT "categories_in_products_pkey" PRIMARY KEY ("productId","categoryId")
+    CONSTRAINT "products_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -65,7 +58,4 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 ALTER TABLE "adresses" ADD CONSTRAINT "adresses_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "categories_in_products" ADD CONSTRAINT "categories_in_products_productId_fkey" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "categories_in_products" ADD CONSTRAINT "categories_in_products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
