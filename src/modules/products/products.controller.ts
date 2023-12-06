@@ -3,17 +3,23 @@ import {
     Controller, 
     Get, 
     Param, 
-    Post 
+    Post, 
+    Request,
+    UseGuards
 } from "@nestjs/common";
 import { ProductService } from "./products.service"
 import { CreateProductDto } from "./dtos/create-product.dto";
+import { JwtauthGuard } from "../auth/jwt-auth.guard";
+
 
 @Controller('products')
 export class ProductController {
     constructor(private productService : ProductService){} 
 
     @Post()
-    create(@Body() data: CreateProductDto){
+    @UseGuards(JwtauthGuard)
+    create(@Body() data: CreateProductDto, @Request() req){
+        console.log(req.user)
         return this.productService.create(data)
     }
 

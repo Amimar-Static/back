@@ -19,7 +19,7 @@ export class CreateUserDto {
     @IsString()
     @IsEmail()
     email: string
-
+  
     @IsString()
     @MinLength(8)
     @IsNotEmpty()
