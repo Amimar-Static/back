@@ -5,7 +5,7 @@ export class Product{
     name: string
     description: string
     value: string
-    avaliable: boolean
+    available: boolean
     highlighted: boolean
     image: string | null
     product_url: string | null

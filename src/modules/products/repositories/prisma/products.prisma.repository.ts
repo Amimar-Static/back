@@ -19,7 +19,7 @@ export class ProductPrismaRepository implements ProductsRepository{
                 name: product.name,
                 description: product.description,
                 value: product.value,
-                avaliable: product.avaliable,
+                available: product.available,
                 highlighted: product.highlighted,
                 image: product.image,
                 product_url: product.product_url,

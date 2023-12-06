@@ -54,7 +54,7 @@ model Product {
   name String @unique
   description String
   value String
-  avaliable  Boolean
+  available  Boolean
   highlighted Boolean
   image String?
   product_url String?
