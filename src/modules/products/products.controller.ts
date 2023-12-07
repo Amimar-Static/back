@@ -10,14 +10,16 @@ import {
 import { ProductService } from "./products.service"
 import { CreateProductDto } from "./dtos/create-product.dto";
 import { JwtauthGuard } from "../auth/jwt-auth.guard";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-
+@ApiTags('Products')
 @Controller('products')
 export class ProductController {
     constructor(private productService : ProductService){} 
 
     @Post()
     @UseGuards(JwtauthGuard)
+    @ApiBearerAuth()
     create(@Body() data: CreateProductDto, @Request() req){
         console.log(req.user)
         return this.productService.create(data)

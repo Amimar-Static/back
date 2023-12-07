@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger"
 import { 
     IsNotEmpty, 
     IsOptional, 
@@ -5,14 +6,19 @@ import {
 } from "class-validator"
 
 export class CreateCategoryDto {
+    
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     name: string 
 
+    @ApiProperty()
     @IsString()
     @IsOptional()
     image: string
 
+    
+    @ApiProperty()
     @IsString()
     @IsOptional()
     category_url: string
