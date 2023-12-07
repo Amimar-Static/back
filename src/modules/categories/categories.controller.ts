@@ -1,13 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtauthGuard } from '../auth/jwt-auth.guard';
 
+@ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
+  @UseGuards(JwtauthGuard)
+  @ApiBearerAuth()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
   }
@@ -23,11 +28,15 @@ export class CategoriesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtauthGuard)
+  @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtauthGuard)
+  @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.categoriesService.remove(id);
   }
