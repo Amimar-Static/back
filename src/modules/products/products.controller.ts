@@ -1,8 +1,10 @@
 import { 
     Body, 
     Controller, 
+    Delete, 
     Get, 
     Param, 
+    Patch, 
     Post, 
     Request,
     UseGuards
@@ -11,6 +13,7 @@ import { ProductService } from "./products.service"
 import { CreateProductDto } from "./dtos/create-product.dto";
 import { JwtauthGuard } from "../auth/jwt-auth.guard";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { UpdateProductDto } from "./dtos/updatproduct.dto";
 
 @ApiTags('Products')
 @Controller('products')
@@ -34,5 +37,20 @@ export class ProductController {
     findOne(@Param('id') id: string){
         return this.productService.findOne(id)
     }
+    
+    @Patch(':id')
+    @UseGuards(JwtauthGuard)
+    @ApiBearerAuth()
+    update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+      return this.productService.update(id, updateProductDto);
+    }
+  
+    @Delete(':id')
+    @UseGuards(JwtauthGuard)
+    @ApiBearerAuth()
+    remove(@Param('id') id: string) {
+      return this.productService.remove(id);
+    }
+
 }
 

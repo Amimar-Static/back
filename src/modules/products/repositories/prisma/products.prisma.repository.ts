@@ -3,6 +3,7 @@ import { CreateProductDto } from "../../dtos/create-product.dto";
 import { Product } from "../../entities/product.entitie";
 import { ProductsRepository } from "../product.repository";
 import { Injectable } from '@nestjs/common';
+import { UpdateProductDto } from "../../dtos/updatproduct.dto";
 
 @Injectable()
 export class ProductPrismaRepository implements ProductsRepository{
@@ -45,6 +46,20 @@ export class ProductPrismaRepository implements ProductsRepository{
         });
     
         return product;
+      }
+
+    async update(id: string, data: UpdateProductDto): Promise<Product> {
+        const product = await this.prisma.product.update({
+          where: { id },
+          data: { ...data },
+        });
+    
+        return product;
+      }
+    async delete(id: string): Promise<void> {
+        await this.prisma.product.delete({
+          where: { id },
+        });
       }
     
 }
