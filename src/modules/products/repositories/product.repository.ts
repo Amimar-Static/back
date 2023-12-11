@@ -7,6 +7,7 @@ export abstract class ProductsRepository{
     abstract findAll(): Promise<Product[]>
     abstract findOne(id: string): Promise<Product>
     abstract findByName(name: string): Promise<Product>;
+    abstract findManyByCategory(categoryId: string): Promise<Product[]>
     abstract update(id: string, data: UpdateProductDto): Promise<Product>;
     abstract delete(id: string): Promise<void>;
 }
