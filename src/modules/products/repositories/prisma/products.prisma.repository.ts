@@ -61,5 +61,11 @@ export class ProductPrismaRepository implements ProductsRepository{
           where: { id },
         });
       }
+
+    async findManyByCategory(categoryId: string) {
+      return this.prisma.product.findMany({
+        where: { categoryId },
+      });
+    }
     
 }

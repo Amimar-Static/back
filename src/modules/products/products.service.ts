@@ -44,4 +44,8 @@ export class ProductService{
         }
         return this.productsRepository.delete(id)
     }
+
+    async getProductsByCategory(categoryId: string) {
+        return this.productsRepository.findManyByCategory(categoryId);
+    }
 }
