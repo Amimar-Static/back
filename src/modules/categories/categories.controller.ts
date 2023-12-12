@@ -1,9 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { 
+  Controller, 
+  Get, 
+  Post, 
+  Body, 
+  Patch, 
+  Param, 
+  Delete, 
+  UseGuards, 
+  UseInterceptors, 
+  UploadedFiles 
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtauthGuard } from '../auth/jwt-auth.guard';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -32,6 +44,24 @@ export class CategoriesController {
   @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.update(id, updateCategoryDto);
+  }
+
+  @Patch('upload/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 }
+    ]),
+  )
+  async upload(
+    @UploadedFiles()
+    files: 
+    {
+      image: Express.Multer.File[]
+    },
+    @Param('id') id: string,
+  ) {
+    const { image } = files;
+    return this.categoriesService.upload(image[0], id);
   }
 
   @Delete(':id')

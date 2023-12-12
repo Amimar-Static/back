@@ -7,13 +7,16 @@ import {
     Patch, 
     Post, 
     Request,
-    UseGuards
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors
 } from "@nestjs/common";
 import { ProductService } from "./products.service"
 import { CreateProductDto } from "./dtos/create-product.dto";
 import { JwtauthGuard } from "../auth/jwt-auth.guard";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UpdateProductDto } from "./dtos/updatproduct.dto";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
 
 @ApiTags('Products')
 @Controller('products')
@@ -24,7 +27,6 @@ export class ProductController {
     @UseGuards(JwtauthGuard)
     @ApiBearerAuth()
     create(@Body() data: CreateProductDto, @Request() req){
-        console.log(req.user)
         return this.productService.create(data)
     }
 
@@ -50,6 +52,28 @@ export class ProductController {
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
       return this.productService.update(id, updateProductDto);
     }
+
+    @Patch('upload/:id')
+    @UseInterceptors(
+      FileFieldsInterceptor([
+        { name: 'image', maxCount: 1 },
+        // { name: 'product', maxCount: 1 },
+      ]),
+    )
+    async upload(
+      @UploadedFiles()
+      files: 
+      {
+        image: Express.Multer.File[]; 
+        // product: Express.Multer.File[] 
+      },
+      @Param('id') id: string,
+    ) {
+      const { image } = files;
+
+      return this.productService.upload(image[0],  id);
+    }
+    
   
     @Delete(':id')
     @UseGuards(JwtauthGuard)

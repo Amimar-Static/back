@@ -15,7 +15,7 @@ export class CreateCategoryDto {
     @ApiProperty()
     @IsString()
     @IsOptional()
-    image: string
+    image: string 
 
     
     @ApiProperty()
