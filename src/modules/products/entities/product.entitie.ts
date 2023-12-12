@@ -8,7 +8,7 @@ export class Product{
     available: boolean
     highlighted: boolean
     image: string | null
-    product_url: string | null
+
     readonly register_date: Date
     categoryId: string
     

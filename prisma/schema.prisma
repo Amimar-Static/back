@@ -19,31 +19,13 @@ model User{
   phone String
   register_date DateTime 
   account_state String
-  adresses Adress[]
   @@map("users")
 }
-
-model Adress {
-  id String @id 
-  zipcode String
-  state String 
-  city String
-  street String
-  number String
-  complement String
-  //Relacionamento com user
-  user User @relation(fields: [userId], references: [id])
-  userId String
-
-  @@map("adresses")
-}
-
 
 model Category {
   id String @id
   name String @unique
   image String?
-  category_url String?
   products Product[]
 
   @@map("categories")
@@ -57,7 +39,6 @@ model Product {
   available  Boolean
   highlighted Boolean
   image String?
-  product_url String?
   register_date DateTime 
   category Category @relation(fields: [categoryId], references: [id])
   categoryId String

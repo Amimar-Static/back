@@ -37,10 +37,5 @@ export class CreateProductDto{
 
     @ApiProperty()
     @IsString()
-    @IsOptional()
-    product_url: string | null
-
-    @ApiProperty()
-    @IsString()
     categoryId: string
 }

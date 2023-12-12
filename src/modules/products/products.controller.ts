@@ -57,7 +57,6 @@ export class ProductController {
     @UseInterceptors(
       FileFieldsInterceptor([
         { name: 'image', maxCount: 1 },
-        // { name: 'product', maxCount: 1 },
       ]),
     )
     async upload(
@@ -65,7 +64,6 @@ export class ProductController {
       files: 
       {
         image: Express.Multer.File[]; 
-        // product: Express.Multer.File[] 
       },
       @Param('id') id: string,
     ) {

@@ -17,9 +17,4 @@ export class CreateCategoryDto {
     @IsOptional()
     image: string 
 
-    
-    @ApiProperty()
-    @IsString()
-    @IsOptional()
-    category_url: string
 }
