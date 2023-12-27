@@ -13,6 +13,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtauthGuard } from '../auth/jwt-auth.guard';
+import {RolesGuard} from '../auth/roules.guard'
+import {Roles} from '../auth/roles.decorator'
 
 @ApiTags('Users')
 @Controller('users')
@@ -25,14 +27,16 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtauthGuard)
+  @Roles(['admin'])
+  @UseGuards(JwtauthGuard, RolesGuard)
   @ApiBearerAuth()
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtauthGuard)
+  @Roles(['admin'])
+  @UseGuards(JwtauthGuard, RolesGuard)
   @ApiBearerAuth()
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
