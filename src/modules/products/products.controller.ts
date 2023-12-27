@@ -1,8 +1,10 @@
 import { 
+  BadRequestException,
     Body, 
     Controller, 
     Delete, 
     Get, 
+    InternalServerErrorException, 
     Param, 
     Patch, 
     Post, 
@@ -17,6 +19,8 @@ import { JwtauthGuard } from "../auth/jwt-auth.guard";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UpdateProductDto } from "./dtos/updatproduct.dto";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { Roles } from "../auth/roles.decorator";
+import { RolesGuard } from "../auth/roules.guard";
 
 @ApiTags('Products')
 @Controller('products')
@@ -24,7 +28,8 @@ export class ProductController {
     constructor(private productService : ProductService){} 
 
     @Post()
-    @UseGuards(JwtauthGuard)
+    @Roles(['admin'])
+    @UseGuards(JwtauthGuard, RolesGuard)
     @ApiBearerAuth()
     create(@Body() data: CreateProductDto, @Request() req){
         return this.productService.create(data)
@@ -47,7 +52,8 @@ export class ProductController {
     
     
     @Patch(':id')
-    @UseGuards(JwtauthGuard)
+    @Roles(['admin'])
+    @UseGuards(JwtauthGuard, RolesGuard)
     @ApiBearerAuth()
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
       return this.productService.update(id, updateProductDto);
@@ -59,22 +65,34 @@ export class ProductController {
         { name: 'image', maxCount: 1 },
       ]),
     )
+    @Roles(['admin'])
+    @UseGuards(JwtauthGuard, RolesGuard)
     async upload(
       @UploadedFiles()
       files: 
       {
-        image: Express.Multer.File[]; 
+        image?: Express.Multer.File[];  
       },
       @Param('id') id: string,
     ) {
-      const { image } = files;
-
-      return this.productService.upload(image[0],  id);
+      try {
+        // Verifique se 'files' e 'files.image' são definidos
+        if (!files || !files.image || files.image.length === 0) {
+          throw new BadRequestException('Image file is missing.');
+        }
+        const { image } = files;
+  
+        return this.productService.upload(image[0],  id);
+      } catch (error) {
+        // Trate o erro adequadamente e retorne uma resposta apropriada
+        throw new InternalServerErrorException('Failed to process the image upload.');
+      }
     }
     
   
     @Delete(':id')
-    @UseGuards(JwtauthGuard)
+    @Roles(['admin'])
+    @UseGuards(JwtauthGuard, RolesGuard)
     @ApiBearerAuth()
     remove(@Param('id') id: string) {
       return this.productService.remove(id);
