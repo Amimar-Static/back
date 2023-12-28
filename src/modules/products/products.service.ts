@@ -18,8 +18,20 @@ export class ProductService{
         return await this.productsRepository.create(data)
     }
 
-    async findAll(){
-        return await this.productsRepository.findAll()
+    async findAllProducts(){
+        return await this.productsRepository.findAllProducts()
+    }
+
+    async findAll(page: number, limit: number){
+        // Verificar se a página ou o limite são menores que 1
+        if (page < 1) {
+            page = 1;
+        }
+        if (limit < 1) {
+            limit = 12; // Número padrão de elementos por página
+        }
+
+        return await this.productsRepository.findAll(page, limit)
     }
 
     async findOne(id: string){
@@ -46,8 +58,8 @@ export class ProductService{
         return this.productsRepository.delete(id)
     }
 
-    async getProductsByCategory(categoryId: string) {
-        return this.productsRepository.findManyByCategory(categoryId);
+    async getProductsByCategory(categoryId: string, page: number, limit: number) {
+        return this.productsRepository.findManyByCategory(categoryId, page, limit);
     }
 
     async upload(
