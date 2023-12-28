@@ -11,7 +11,8 @@ import {
     Request,
     UploadedFiles,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
+    Query
 } from "@nestjs/common";
 import { ProductService } from "./products.service"
 import { CreateProductDto } from "./dtos/create-product.dto";
@@ -36,8 +37,14 @@ export class ProductController {
     }
 
     @Get()
-    findAll(){
-        return this.productService.findAll()
+    findAllProducts(){
+        return this.productService.findAllProducts()
+    }
+
+
+    @Get('findAllPaged')
+    findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 12) {
+      return this.productService.findAll(page, limit);
     }
 
     @Get(':id')
@@ -46,8 +53,8 @@ export class ProductController {
     }
 
     @Get('category/:categoryId')
-    async getProductsByCategory(@Param('categoryId') categoryId: string) {
-      return this.productService.getProductsByCategory(categoryId);
+    async getProductsByCategory(@Param('categoryId') categoryId: string, @Query('page') page: number = 1, @Query('limit') limit: number = 12) {
+      return this.productService.getProductsByCategory(categoryId, page, limit);
     }
     
     
