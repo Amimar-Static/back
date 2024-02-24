@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { CreateProductDto } from './dtos/create-product.dto';
-import { ProductsRepository } from './repositories/product.repository';
-import { UpdateProductDto } from './dtos/updatproduct.dto';
-import { v2 as cloudinary } from 'cloudinary'; 
-import { unlink } from 'node:fs';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common'
+import { CreateProductDto } from './dtos/create-product.dto'
+import { ProductsRepository } from './repositories/product.repository'
+import { UpdateProductDto } from './dtos/updatproduct.dto'
+import * as AWS from 'aws-sdk';
+import * as fs from 'fs';
+import * as path from 'path';
+
 @Injectable()
 export class ProductService{
     constructor(private productsRepository: ProductsRepository){}
@@ -61,44 +63,49 @@ export class ProductService{
     async getProductsByCategory(categoryId: string, page: number, limit: number) {
         return this.productsRepository.findManyByCategory(categoryId, page, limit);
     }
-
-    async upload(
-        image: Express.Multer.File,
-        id: string
-    ){
-        cloudinary.config({
-            cloud_name: process.env.CLOUD_NAME,
-            api_key: process.env.API_KEY,
-            api_secret: process.env.API_SECRET
-        })
-
-        const findProduct = await this.productsRepository.findOne(id)
-        if(!findProduct){
-            throw new NotFoundException('Product not fond')
-        }
-
-        const uploadImage = await cloudinary.uploader.upload(
-            image.path,
-            { resource_type: 'image'},
-            (error, result) => {
-                return result
-            }
-        )
-
-        const updateProduct = await this.productsRepository.update(
-            id,
-            {
-                image: uploadImage.secure_url
-            }
-        );
-
-        unlink(image.path, (error) => {
-            if (error) {
-              console.log(error);
-            }
+    
+    async upload(image: Express.Multer.File, id: string) {
+        // Configuração da AWS
+        AWS.config.update({
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         });
 
+        // Criar um novo objeto S3
+        const s3 = new AWS.S3();
 
-        return updateProduct
+        const findProduct = await this.productsRepository.findOne(id);
+        if (!findProduct) {
+            throw new NotFoundException('Product not found');
+        }
+
+        // Ler o arquivo da imagem
+        const fileContent = fs.readFileSync(image.path);
+
+        // Definir parâmetros para upload
+        const params = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: `${id}_${path.basename(image.path)}`, // Nome do arquivo no S3
+            Body: fileContent,
+            ACL: 'public-read', // Defina as permissões de acesso
+        };
+
+        try {
+            // Fazer upload da imagem para o S3
+            const uploadResult = await s3.upload(params).promise();
+
+            // Atualizar o produto com o URL da imagem no S3
+            const updateProduct = await this.productsRepository.update(id, {
+                image: uploadResult.Location,
+            });
+
+            // Excluir o arquivo local depois do upload
+            fs.unlinkSync(image.path);
+
+            return updateProduct;
+        } catch (error) {
+            console.error('Error uploading image to S3:', error);
+            throw error;
+        }
     }
 }

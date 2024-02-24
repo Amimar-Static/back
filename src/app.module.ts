@@ -6,7 +6,12 @@ import { AuthModule } from './modules/auth/auth.module';
 
 
 @Module({
-  imports: [ProductModule, UsersModule, CategoriesModule, AuthModule],
+  imports: [
+    ProductModule, 
+    UsersModule, 
+    CategoriesModule, 
+    AuthModule
+  ],
   controllers: [],
   providers: [],
 })

@@ -2,8 +2,9 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './repositories/categories.repository';
-import { v2 as cloudinary } from 'cloudinary'; 
-import { unlink } from 'node:fs';
+import * as AWS from 'aws-sdk';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class CategoriesService {
@@ -47,41 +48,53 @@ export class CategoriesService {
     return this.categoryRepository.delete(id)
   }
 
-  async upload(
-    image: Express.Multer.File,
-    id: string
-){
-    cloudinary.config({
-        cloud_name: process.env.CLOUD_NAME,
-        api_key: process.env.API_KEY,
-        api_secret: process.env.API_SECRET
-    })
 
-    const findcategory = await this.categoryRepository.findOne(id)
+async upload(image: Express.Multer.File, id: string) {
+  // Configuração da AWS
+  AWS.config.update({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  });
+
+  // Criar um novo objeto S3
+  const s3 = new AWS.S3();
+
+      const findcategory = await this.categoryRepository.findOne(id)
     if(!findcategory){
         throw new NotFoundException('category not fond')
     }
+  // const findProduct = await this.productsRepository.findOne(id);
+  // if (!findProduct) {
+  //     throw new NotFoundException('Product not found');
+  // }
 
-    const uploadImage = await cloudinary.uploader.upload(
-        image.path,
-        { resource_type: 'image'},
-        (error, result) => {
-            return result
-        }
-    )
+  // Ler o arquivo da imagem
+  const fileContent = fs.readFileSync(image.path);
 
-    const updateCategory = await this.categoryRepository.update(
-        id,
-        { image: uploadImage.secure_url},
-    );
+  // Definir parâmetros para upload
+  const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: `${id}_${path.basename(image.path)}`, // Nome do arquivo no S3
+      Body: fileContent,
+      ACL: 'public-read', // Defina as permissões de acesso
+  };
 
-    unlink(image.path, (error) => {
-        if (error) {
-          console.log(error);
-        }
-    });
+  try {
+      // Fazer upload da imagem para o S3
+      const uploadResult = await s3.upload(params).promise();
 
+      // Atualizar o produto com o URL da imagem no S3
+      const updateCategory = await this.categoryRepository.update(id, {
+          image: uploadResult.Location,
+      });
 
-    return updateCategory
+      // Excluir o arquivo local depois do upload
+      fs.unlinkSync(image.path);
+
+      return updateCategory;
+  } catch (error) {
+      console.error('Error uploading image to S3:', error);
+      throw error;
+  }
 }
 }

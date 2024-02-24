@@ -35,8 +35,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(['admin'])
-  @UseGuards(JwtauthGuard, RolesGuard)
+  @UseGuards(JwtauthGuard)
   @ApiBearerAuth()
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
