@@ -3,6 +3,7 @@ import { ProductModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { AuthModule } from './modules/auth/auth.module';
+import {AsaasModule} from './modules/asaas/asaas.module'
 
 
 @Module({
@@ -10,7 +11,8 @@ import { AuthModule } from './modules/auth/auth.module';
     ProductModule, 
     UsersModule, 
     CategoriesModule, 
-    AuthModule
+    AuthModule,
+    AsaasModule,
   ],
   controllers: [],
   providers: [],
