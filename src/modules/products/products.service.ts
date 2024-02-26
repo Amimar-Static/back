@@ -25,12 +25,11 @@ export class ProductService{
     }
 
     async findAll(page: number, limit: number){
-        // Verificar se a página ou o limite são menores que 1
         if (page < 1) {
             page = 1;
         }
         if (limit < 1) {
-            limit = 12; // Número padrão de elementos por página
+            limit = 12; 
         }
 
         return await this.productsRepository.findAll(page, limit)
@@ -65,13 +64,11 @@ export class ProductService{
     }
     
     async upload(image: Express.Multer.File, id: string) {
-        // Configuração da AWS
         AWS.config.update({
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         });
 
-        // Criar um novo objeto S3
         const s3 = new AWS.S3();
 
         const findProduct = await this.productsRepository.findOne(id);
@@ -79,27 +76,22 @@ export class ProductService{
             throw new NotFoundException('Product not found');
         }
 
-        // Ler o arquivo da imagem
         const fileContent = fs.readFileSync(image.path);
 
-        // Definir parâmetros para upload
         const params = {
             Bucket: process.env.AWS_S3_BUCKET_NAME,
-            Key: `${id}_${path.basename(image.path)}`, // Nome do arquivo no S3
+            Key: `${id}_${path.basename(image.path)}`, 
             Body: fileContent,
-            ACL: 'public-read', // Defina as permissões de acesso
+            ACL: 'public-read', 
         };
 
         try {
-            // Fazer upload da imagem para o S3
             const uploadResult = await s3.upload(params).promise();
 
-            // Atualizar o produto com o URL da imagem no S3
             const updateProduct = await this.productsRepository.update(id, {
                 image: uploadResult.Location,
             });
 
-            // Excluir o arquivo local depois do upload
             fs.unlinkSync(image.path);
 
             return updateProduct;

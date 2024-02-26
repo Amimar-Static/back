@@ -83,7 +83,6 @@ export class ProductController {
       @Param('id') id: string,
     ) {
       try {
-        // Verifique se 'files' e 'files.image' são definidos
         if (!files || !files.image || files.image.length === 0) {
           throw new BadRequestException('Image file is missing.');
         }
@@ -91,7 +90,6 @@ export class ProductController {
   
         return this.productService.upload(image[0],  id);
       } catch (error) {
-        // Trate o erro adequadamente e retorne uma resposta apropriada
         throw new InternalServerErrorException('Failed to process the image upload.');
       }
     }
