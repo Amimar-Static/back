@@ -113,7 +113,7 @@ export class ProductPrismaRepository implements ProductsRepository{
         page = 1;
       }
       if (limit < 1) {
-          limit = 12; // Número padrão de elementos por página
+          limit = 12; 
       }
        
       const offset = (page - 1) * limit;
