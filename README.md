@@ -71,3 +71,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+## Lógica do banco
+User e Adress: Um usuário pode ter vários endereços, então o relacionamento entre User e Adress é 1:N.
+Product e Category: Um produto pode pertencer a várias categorias e uma categoria pode ter vários produtos. Portanto, o relacionamento entre Product e Category é N:N, que é representado pela tabela de junção CategoryOnProduct.
